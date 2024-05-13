@@ -54,12 +54,6 @@
         </profile>
     </profiles>
     <dependencies>
-        <!-- Spring Boot Starter sending email Bealdung-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-            <version>3.1.11</version>
-        </dependency>
 
         <!-- Spring Boot Starter sending email-->
         <dependency>
