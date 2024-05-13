@@ -16,4 +16,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u.email FROM User u")
     List<String> findAllEmails();
+
+    @Query("SELECT u.email FROM User u WHERE u.isPremium = true")
+    List<String> findEmailsByPremiumUsers();
+
+    @Query("SELECT u.email FROM User u WHERE u.isPremium = false")
+    List<String> findEmailsByNotPremiumUsers();
+
 }

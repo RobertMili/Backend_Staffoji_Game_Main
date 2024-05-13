@@ -3,6 +3,7 @@ package com.example.backend_staffoji_game.controller;
 import com.example.backend_staffoji_game.dto.EmailNotificationSendNowDto;
 import com.example.backend_staffoji_game.dto.NotificationDto;
 import com.example.backend_staffoji_game.service.sendingEmail.EmailService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ public class EmailSendingController {
         this.emailService = emailService;
     }
 
+    @Operation(summary = "Choice \"notificationTarget\": \"all\"  , \"premium\"  or \"notPremium\"")
     @PostMapping("/")
     public ResponseEntity sendEmail(@Valid final @RequestBody EmailNotificationSendNowDto emailNotificationSendNowDto) {
         boolean isEmailSent = emailService.sendNotification(emailNotificationSendNowDto);

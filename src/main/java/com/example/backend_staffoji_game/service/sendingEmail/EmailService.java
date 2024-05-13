@@ -28,10 +28,6 @@ public class EmailService {
         this.userRepository = userRepository;
     }
 
-    private List<String> getAllEmailAddresses() {
-        return userRepository.findAllEmails();
-    }
-
     public boolean sendNotification(EmailNotificationSendNowDto emailNotificationSendNowDto) {
         try {
             SimpleMailMessage mail = new SimpleMailMessage();
@@ -56,5 +52,21 @@ public class EmailService {
             allEmailAddresses.toArray(emailArray);
             mail.setTo(emailArray);
         }
+        else if ("premium".equals(emailNotificationSendNowDto.getNotificationTarget())) {
+            List<String> premiumEmailAddresses = userRepository.findEmailsByPremiumUsers();
+            String[] emailArray = new String[premiumEmailAddresses.size()];
+            premiumEmailAddresses.toArray(emailArray);
+            mail.setTo(emailArray);
+        }
+        else if ("notPremium".equals(emailNotificationSendNowDto.getNotificationTarget())) {
+            List<String> notPremiumEmailAddresses = userRepository.findEmailsByNotPremiumUsers();
+            String[] emailArray = new String[notPremiumEmailAddresses.size()];
+            notPremiumEmailAddresses.toArray(emailArray);
+            mail.setTo(emailArray);
+        }
+
+    }
+    private List<String> getAllEmailAddresses() {
+        return userRepository.findAllEmails();
     }
 }
