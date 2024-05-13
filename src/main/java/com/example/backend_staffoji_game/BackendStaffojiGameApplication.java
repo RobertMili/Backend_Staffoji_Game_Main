@@ -12,6 +12,7 @@ public class BackendStaffojiGameApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(BackendStaffojiGameApplication.class, args);
+
     }
 
 }
