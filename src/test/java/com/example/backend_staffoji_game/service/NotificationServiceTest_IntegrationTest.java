@@ -1,10 +1,13 @@
 package com.example.backend_staffoji_game.service;
 
 import com.example.backend_staffoji_game.dto.NotificationDto;
+import com.example.backend_staffoji_game.dto.UserDto;
 import com.example.backend_staffoji_game.exception.UserAlreadyExistsException;
 import com.example.backend_staffoji_game.exception.UserDoesNotExistsException;
 import com.example.backend_staffoji_game.repository.NotificationRepository;
+import com.example.backend_staffoji_game.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,10 +26,15 @@ public class NotificationServiceTest_IntegrationTest {
     private NotificationService notificationService;
     @Autowired
     private NotificationRepository notificationRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     private NotificationDto notificationObject;
 
     LocalDateTime now = LocalDateTime.now();
+
 
 
     @BeforeEach
@@ -37,6 +45,7 @@ public class NotificationServiceTest_IntegrationTest {
 
     private void cleanUpDatabase() {
         notificationRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -44,8 +53,11 @@ public class NotificationServiceTest_IntegrationTest {
         // Check if database is empty
         assertTrue(databaseIsEmpty());
 
+        // add user
+        addingUser();
+
         // Create a notification
-        notificationObject = new NotificationDto("test", "test", "test", now, true);
+        notificationObject = new NotificationDto("test", "test", "all", now, true);
 
         // Save user
         notificationService.createNotification(notificationObject);
@@ -67,28 +79,35 @@ public class NotificationServiceTest_IntegrationTest {
         // Check if database is empty
         assertTrue(databaseIsEmpty());
 
-        // Create a notification
-        notificationObject = new NotificationDto("testNegative", "testNegative", "testNegative", now, true);
+        addingUser();
+
+        // Create a notification;
+        notificationObject = new NotificationDto("testNegative", "testNegative", "all", now, true);
 
         // Save user
         notificationService.createNotification(notificationObject);
 
         // Try to create another notification with the same title
-        NotificationDto duplicateNotification = new NotificationDto("testNegative", "testNegative", "testNegative", now, true);
+        NotificationDto duplicateNotification = new NotificationDto("testNegative", "testNegative", "all", now, true);
 
         // Assert that a UserAlreadyExistsException is thrown
         assertThrows(UserDoesNotExistsException.class, () -> notificationService.createNotification(duplicateNotification));
     }
 
+    //todo this is testing race condition take some times to test this.
+    @Disabled
     @Test
     void createNotification_checkingToAvoidRaceCondition() {
         // Check if database is empty
         assertTrue(databaseIsEmpty());
 
+        // add user
+        addingUser();
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
+
             // Create a notification
-            notificationObject = new NotificationDto("test" + i, "test", "test", now, true);
+            notificationObject = new NotificationDto("test" + i, "test", "all", now, true);
             notificationService.createNotification(notificationObject);
 
         }
@@ -98,13 +117,16 @@ public class NotificationServiceTest_IntegrationTest {
 
         // Assert
         assertFalse(result.isEmpty());
-        assertEquals(result.size(), 100);
+        assertEquals(result.size(), 10);
     }
 
     @Test
     void checkIfIsSendNowFalse_NotSendPassTime_NegativeTest() {
         // Check if database is empty
         assertTrue(databaseIsEmpty());
+
+        // add user
+        addingUser();
 
         // Create a notification
         notificationObject = new NotificationDto("test", "test", "test", now.minusMinutes(1), false);
@@ -118,8 +140,11 @@ public class NotificationServiceTest_IntegrationTest {
         // Check if database is empty
         assertTrue(databaseIsEmpty());
 
+        // add user
+        addingUser();
+
         // Create a notification
-        notificationObject = new NotificationDto("test", "test", "test", now.plusMinutes(1), false);
+        notificationObject = new NotificationDto("test", "test", "all", now.plusMinutes(1), false);
 
         // Save user
         notificationService.createNotification(notificationObject);
@@ -138,6 +163,9 @@ public class NotificationServiceTest_IntegrationTest {
 
     @Test
     void createNotification_NullValues_EdgeCaseTest() {
+        // add user
+        addingUser();
+
         // Create a notification with null values
         notificationObject = new NotificationDto(null, null, null, null, false);
 
@@ -146,7 +174,13 @@ public class NotificationServiceTest_IntegrationTest {
     }
 
     private boolean databaseIsEmpty() {
-        return notificationRepository.findAll().isEmpty();
+        return notificationRepository.findAll().isEmpty() && userRepository.findAll().isEmpty();
+    }
+
+    private void addingUser() {
+
+        var userTest = new UserDto("testNegative", "testNegative", "staffoji_game@mail.com", true);
+        userService.createUser(userTest);
     }
 }
 

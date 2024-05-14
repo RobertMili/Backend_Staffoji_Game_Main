@@ -1,6 +1,6 @@
-package com.example.backend_staffoji_game.service.sendingEmail;
+package com.example.backend_staffoji_game.service;
 
-import com.example.backend_staffoji_game.controller.EmailSendingController;
+import com.example.backend_staffoji_game.controller.NotificationController;
 import com.example.backend_staffoji_game.dto.EmailNotificationSendNowDto;
 import com.example.backend_staffoji_game.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -20,7 +19,7 @@ public class EmailService {
     @Autowired
     private UserRepository userRepository;
 
-    Logger logger = Logger.getLogger(EmailSendingController.class.getName());
+    Logger logger = Logger.getLogger(NotificationController.class.getName());
 
 
     public EmailService(JavaMailSender javaMailSender, UserRepository userRepository) {

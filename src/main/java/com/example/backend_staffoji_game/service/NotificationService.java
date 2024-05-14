@@ -6,8 +6,8 @@ import com.example.backend_staffoji_game.exception.UserAlreadyExistsException;
 import com.example.backend_staffoji_game.exception.UserDoesNotExistsException;
 import com.example.backend_staffoji_game.model.Notification;
 import com.example.backend_staffoji_game.repository.NotificationRepository;
-import com.example.backend_staffoji_game.service.sendingEmail.EmailService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
