@@ -27,7 +27,7 @@ public class NotificationController {
 
     @PostMapping("/")
     public ResponseEntity<NotificationDto> createNotification(@Valid final @RequestBody NotificationDto notificationDto) {
-        return new ResponseEntity<>( notificationService.createNotification(notificationDto), HttpStatus.CREATED);
+        return new ResponseEntity<>( notificationService.createNotification(notificationDto), ResponseEntity.ok("Email sent successfully").getStatusCode());
     }
 
     @GetMapping("/")

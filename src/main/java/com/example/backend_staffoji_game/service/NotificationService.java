@@ -1,10 +1,12 @@
 package com.example.backend_staffoji_game.service;
 
+import com.example.backend_staffoji_game.dto.EmailNotificationSendNowDto;
 import com.example.backend_staffoji_game.dto.NotificationDto;
 import com.example.backend_staffoji_game.exception.UserAlreadyExistsException;
 import com.example.backend_staffoji_game.exception.UserDoesNotExistsException;
 import com.example.backend_staffoji_game.model.Notification;
 import com.example.backend_staffoji_game.repository.NotificationRepository;
+import com.example.backend_staffoji_game.service.sendingEmail.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +18,20 @@ import java.util.List;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final EmailService emailService;
 
 
     public NotificationDto createNotification(NotificationDto notificationDto) {
         validateNotification(notificationDto);
         checkIfTitleExists(notificationDto);
         checkIfIsTimeInFuture(notificationDto);
+
+        var emailNotificationSendNowDto = createEmailNotificationDTO(notificationDto);
+        sendEmailNotification(emailNotificationSendNowDto);
+
         Notification notification = buildNotification(notificationDto);
         notificationRepository.save(notification);
+
         return notificationDto;
     }
 
@@ -49,6 +57,19 @@ public class NotificationService {
             throw new UserAlreadyExistsException("Send time must be in the future");
         }
     }
+
+    private static EmailNotificationSendNowDto createEmailNotificationDTO(NotificationDto notificationDto) {
+        var emailNotificationSendNowDto = new EmailNotificationSendNowDto(notificationDto.getTitle(), notificationDto.getMessage(), notificationDto.getNotificationTarget());
+        return emailNotificationSendNowDto;
+    }
+
+    private void sendEmailNotification(EmailNotificationSendNowDto emailNotificationSendNowDto) {
+        boolean isEmailSend = emailService.sendNotification(emailNotificationSendNowDto);
+        if (!isEmailSend) {
+            throw new UserDoesNotExistsException("Failed to send email");
+        }
+    }
+
 
     private Notification buildNotification(NotificationDto notificationDto) {
         Notification notification = Notification.builder()
