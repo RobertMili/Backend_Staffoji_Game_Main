@@ -36,7 +36,7 @@ public class EmailService {
             setEmailRecipients(emailNotificationSendNowDto, mail);
 
             javaMailSender.send(mail);
-            logger.info("Email sent successfully");
+            logger.info("Email sent successfully, to: {}" + emailNotificationSendNowDto.toString());
             return true;
         } catch (MailException e) {
             logger.info("An error occurred while sending the email: " + e.getMessage());

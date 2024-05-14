@@ -4,18 +4,14 @@ import com.example.backend_staffoji_game.dto.EmailNotificationSendNowDto;
 import com.example.backend_staffoji_game.dto.NotificationDto;
 import com.example.backend_staffoji_game.model.Notification;
 import com.example.backend_staffoji_game.repository.NotificationRepository;
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -43,6 +39,7 @@ public class NotificationScheduledService {
 
     @Scheduled(cron = startCronEvery30Sec)
     public void checkAndSendNotifications() {
+        System.out.println("Notifications for today array: " + notificationsForTodayArray);
         notificationsForTodayArray.forEach(this::sendNotificationIfTImeMatches);
     }
 
@@ -70,14 +67,14 @@ public class NotificationScheduledService {
                 notification.getMessage(),
                 notification.getNotificationTarget(),
                 notification.getSendTime(),
-                notification.isSendNow());
+                notification.isSendNow()
+        );
 
         sendingNotification(notificationDTO);
     }
 
     private void sendingNotification(NotificationDto notificationDTO) {
         try {
-            logger.info("Sending notification: {}", notificationDTO.toString());
             sendingNotificationWithEmail(notificationDTO);
         } catch (RuntimeException e) {
             logger.error("Error sending notification: {}", e.getMessage(), e);
@@ -85,19 +82,18 @@ public class NotificationScheduledService {
         }
     }
 
-    private void sendingNotificationWithEmail(NotificationDto notificationDTO) {
-            EmailNotificationSendNowDto emailNotificationSendNowDto = new EmailNotificationSendNowDto(
-                    notificationDTO.getTitle(),
-                    notificationDTO.getMessage(),
-                    notificationDTO.getNotificationTarget());
-            emailService.sendNotification(emailNotificationSendNowDto);
+    private void sendingNotificationWithEmail(NotificationDto NotificationDto) throws RuntimeException {
+        EmailNotificationSendNowDto emailNotificationSendNowDto = new EmailNotificationSendNowDto(
+                NotificationDto.getTitle(),
+                NotificationDto.getMessage(),
+                NotificationDto.getNotificationTarget());
+        emailService.sendNotification(emailNotificationSendNowDto);
     }
 
-    //todo delete this one
-    @Scheduled(cron = startCronEvery30Sec)
+    @Scheduled(cron = startCronAtMidnight)
     public void fetchingFromDatabaseInMidnight() {
         clearNotificationsList();
-        fetchingNotificationsMidnight();
+//        fetchingNotificationsMidnight();
     }
 
     private void clearNotificationsList() {
@@ -106,26 +102,25 @@ public class NotificationScheduledService {
         checkIfNotificationIdsAlreadySent.clear();
     }
 
-    private void fetchingNotificationsMidnight() {
-        LocalDateTime dayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-        LocalDateTime dayEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
-
-        //todo gona fix later
+//    private void fetchingNotificationsMidnight() {
+//        LocalDateTime dayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+//        LocalDateTime dayEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
 //        List<Notification> findAll = notificationRepository.findNotificationByDate(dayStart, dayEnd);
 //
 //        notificationsForTodayArray.addAll(findAll);
-    }
+//    }
 
     @EventListener
     public void handleNotificationSavedEvent(Notification notification) {
-            if (isToday(notification.getSendTime())) {
-                notificationsForTodayArray.add(notification);
-            }
+        if (isToday(notification.getSendTime())) {
+            notificationsForTodayArray.add(notification);
         }
+    }
 
     private boolean isToday(LocalDateTime dateTime) {
         LocalDate today = LocalDate.now();
         return dateTime.toLocalDate().isEqual(today);
     }
+
 
 }
