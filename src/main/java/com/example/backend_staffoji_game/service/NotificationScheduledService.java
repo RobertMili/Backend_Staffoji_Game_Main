@@ -10,12 +10,13 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalTime;
+import java.util.*;
+
+import static java.lang.Thread.sleep;
 
 @Service
 public class NotificationScheduledService {
@@ -24,12 +25,8 @@ public class NotificationScheduledService {
     private final NotificationRepository notificationRepository;
     private final EmailService emailService;
     public List<Notification> notificationsForTodayArray = new ArrayList<>();
-    public Set<Integer> checkIfNotificationIdsAlreadySent = new HashSet<>();
     private final String startCronAtMidnight = "10 0 0 * 1-12 1-5";
     private final String startCron = "0 * * * 1-12 1-5";
-
-    //todo delete this one:
-    private final String startCronEvery30Sec = "0/30 * * * * *";
 
 
     public NotificationScheduledService(NotificationRepository notificationRepository, EmailService emailService) {
@@ -37,28 +34,27 @@ public class NotificationScheduledService {
         this.emailService = emailService;
     }
 
-    @Scheduled(cron = startCronEvery30Sec)
+    @Scheduled(cron = startCron)
     public void checkAndSendNotifications() {
-        System.out.println("Notifications for today array: " + notificationsForTodayArray);
-        notificationsForTodayArray.forEach(this::sendNotificationIfTImeMatches);
+        Iterator<Notification> iterator = notificationsForTodayArray.iterator();
+        while (iterator.hasNext()) {
+            Notification notification = iterator.next();
+            isNotificationTime(notification, iterator);
+        }
     }
 
-    private void sendNotificationIfTImeMatches(Notification notification) {
+    private void isNotificationTime(Notification notification, Iterator<Notification> iterator) {
         LocalDateTime notificationTime = notification.getSendTime();
 
-        if (isTimeToNotify(notificationTime) && isNewNotification(notification)) {
+        if (isTimeToNotify(notificationTime)) {
             sendNotification(notification);
-            checkIfNotificationIdsAlreadySent.add(notification.getNotificationId());
+            iterator.remove();
         }
     }
 
     private boolean isTimeToNotify(LocalDateTime notificationTime) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         return currentDateTime.getHour() == notificationTime.getHour() && currentDateTime.getMinute() == notificationTime.getMinute();
-    }
-
-    private boolean isNewNotification(Notification notification) {
-        return !checkIfNotificationIdsAlreadySent.contains(notification.getNotificationId());
     }
 
     private void sendNotification(Notification notification) {
@@ -90,25 +86,36 @@ public class NotificationScheduledService {
         emailService.sendNotification(emailNotificationSendNowDto);
     }
 
+
     @Scheduled(cron = startCronAtMidnight)
     public void fetchingFromDatabaseInMidnight() {
-        clearNotificationsList();
-//        fetchingNotificationsMidnight();
+        clearNotificationsArray();
+        sleep10Second();
+        fetchingNotificationsMidnight();
     }
 
-    private void clearNotificationsList() {
+    private void clearNotificationsArray() {
         //clear the list to save on memory
         notificationsForTodayArray.clear();
-        checkIfNotificationIdsAlreadySent.clear();
     }
 
-//    private void fetchingNotificationsMidnight() {
-//        LocalDateTime dayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-//        LocalDateTime dayEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
-//        List<Notification> findAll = notificationRepository.findNotificationByDate(dayStart, dayEnd);
-//
-//        notificationsForTodayArray.addAll(findAll);
-//    }
+    private static void sleep10Second() {
+        try {
+            // Pause for 10 seconds
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Thread was interrupted", e);
+        }
+    }
+
+    private void fetchingNotificationsMidnight() {
+        LocalDateTime dayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        LocalDateTime dayEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        List<Notification> findAll = notificationRepository.findNotificationByDate(dayStart, dayEnd);
+
+        notificationsForTodayArray.addAll(findAll);
+    }
 
     @EventListener
     public void handleNotificationSavedEvent(Notification notification) {
@@ -121,6 +128,4 @@ public class NotificationScheduledService {
         LocalDate today = LocalDate.now();
         return dateTime.toLocalDate().isEqual(today);
     }
-
-
 }
