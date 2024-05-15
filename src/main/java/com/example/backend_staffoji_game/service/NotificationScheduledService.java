@@ -10,13 +10,12 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
-
-import static java.lang.Thread.sleep;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Service
 public class NotificationScheduledService {
@@ -52,12 +51,12 @@ public class NotificationScheduledService {
         }
     }
 
-    private boolean isTimeToNotify(LocalDateTime notificationTime) {
+    boolean isTimeToNotify(LocalDateTime notificationTime) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         return currentDateTime.getHour() == notificationTime.getHour() && currentDateTime.getMinute() == notificationTime.getMinute();
     }
 
-    private void sendNotification(Notification notification) {
+    void sendNotification(Notification notification) {
         NotificationDto notificationDTO = new NotificationDto(
                 notification.getTitle(),
                 notification.getMessage(),

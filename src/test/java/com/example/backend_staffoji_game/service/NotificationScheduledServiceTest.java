@@ -63,8 +63,6 @@ class NotificationScheduledServiceTest {
     private EmailService emailServiceAutowired;
 
 
-
-
     @BeforeEach
     void setUp() {
         if (!isDatabaseEmpty()) {
@@ -73,8 +71,7 @@ class NotificationScheduledServiceTest {
         notificationServiceTest = new NotificationService(notificationRepositoryAutowired, emailServiceAutowired, applicationEventPublisher);
 
         // Create an instance of CronJobService
-        notificationScheduledServiceMock = new NotificationScheduledService( notificationRepositoryMock, emailService);
-
+        notificationScheduledServiceMock = new NotificationScheduledService(notificationRepositoryMock, emailService);
 
         mockedNotification = new Notification(1, "Test", "This is a test.",
                 "all", false, LocalDateTime.now().plusHours(1));
@@ -91,7 +88,7 @@ class NotificationScheduledServiceTest {
 
 
     @Test
-    void checkAndSendNotification_MockTest_SendingMultiObjects(){
+    void checkAndSendNotification_MockTest_SendingMultiObjects() {
         // Check that database is empty
         assertTrue(isDatabaseEmpty());
 
@@ -125,7 +122,7 @@ class NotificationScheduledServiceTest {
 
     @DisplayName("test Illegal Argument Exception handling if is passing date in the past")
     @Test
-    void testIllegalArgumentExceptionHandling(){
+    void testIllegalArgumentExceptionHandling() {
         // Arrange
 
         doThrow(IllegalArgumentException.class).when(notificationServiceMock).createNotification(any(NotificationDto.class));
@@ -138,7 +135,7 @@ class NotificationScheduledServiceTest {
 
     @DisplayName("checkAndSendNotifications method with no notifications in database")
     @Test
-    void testCheckAndSendNotifications_NoNotifications_MockTest()  {
+    void testCheckAndSendNotifications_NoNotifications_MockTest() {
         // Check that the database is empty
         assertTrue(isDatabaseEmpty());
 
@@ -163,8 +160,8 @@ class NotificationScheduledServiceTest {
 
         //  Create a list of Notification objects
         Notification notification2 = new Notification(1, "Test", "This is a test.",
-                "all", false,  LocalDateTime.now().plusHours(1));
-        List<Notification> notifications = Arrays.asList(mockedNotification,notification2);
+                "all", false, LocalDateTime.now().plusHours(1));
+        List<Notification> notifications = Arrays.asList(mockedNotification, notification2);
 
         // Set the notificationsForTodayArray of CronJobService to the list of Notification objects
         notificationScheduledServiceMock.notificationsForTodayArray = notifications;
@@ -209,7 +206,7 @@ class NotificationScheduledServiceTest {
 
 //        // Assert
         assertNotNull(resultFirstObject);
-        assertEquals(expectedNotifications.getTitle(),resultFirstObject.get(1).getTitle());
+        assertEquals(expectedNotifications.getTitle(), resultFirstObject.get(1).getTitle());
     }
 
     @Test
@@ -224,7 +221,7 @@ class NotificationScheduledServiceTest {
         // Act
         notificationScheduledService.fetchingFromDatabaseInMidnight();
 
-        var test = notificationRepositoryMock.findNotificationByDate(dayStart,dayEnd);
+        var test = notificationRepositoryMock.findNotificationByDate(dayStart, dayEnd);
 
         System.out.println(test);
         // Assert
@@ -249,13 +246,84 @@ class NotificationScheduledServiceTest {
         assertEquals(notifications, notificationScheduledServiceMock.notificationsForTodayArray);
     }
 
+    @Test
+    void testIsNotificationTime() {
+        // Arrange
+        Notification notificationNow = new Notification(1, "Test", "This is a test.", "all", false, LocalDateTime.now());
+
+        boolean result = notificationScheduledService.isTimeToNotify(notificationNow.getSendTime());
+
+        // Assert
+        assertTrue(result);
+
+    }
+
+    @Test
+    void testSendNotification() {
+        // Arrange
+        Notification notification = new Notification(1, "Test", "This is a test.", "all", false, LocalDateTime.now());
+
+
+        // Act
+        notificationScheduledServiceMock.sendNotification(notification);
+
+        // Assert
+        verify(emailService, times(1)).sendNotification(any(EmailNotificationSendNowDto.class));
+    }
+    @Test
+    void testFetchingFromDatabaseInMidnight_NoNotifications() {
+        // Arrange
+        when(notificationRepositoryMock.findNotificationByDate(any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(Collections.emptyList());
+
+        // Act
+        notificationScheduledServiceMock.fetchingFromDatabaseInMidnight();
+
+        // Assert
+        assertTrue(notificationScheduledServiceMock.notificationsForTodayArray.isEmpty());
+    }
+
+    @Test
+    void testHandleNotificationSavedEvent() {
+        // Arrange
+        Notification notification = new Notification(1, "Test", "This is a test.", "all", false, LocalDateTime.now());
+
+        // Act
+        notificationScheduledServiceMock.handleNotificationSavedEvent(notification);
+
+        // Assert
+        assertTrue(notificationScheduledServiceMock.notificationsForTodayArray.contains(notification));
+    }
+
+    //todo fix this one
+    @Test
+    void testFetchingFromDatabaseInMidnight_NotificationsForFutureDate() {
+        // Arrange
+        Notification notification = new Notification(1, "Test", "This is a test.", "all", false, LocalDateTime.now());
+        when(notificationRepositoryMock.findNotificationByDate(any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(Collections.singletonList(notification));
+
+        Notification notification2 = new Notification(1, "Test", "This is a test.", "all", false, LocalDateTime.now().plusDays(1));
+        when(notificationRepositoryMock.findNotificationByDate(any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(Collections.singletonList(notification2));
+
+        // Act
+        notificationScheduledServiceMock.fetchingFromDatabaseInMidnight();
+
+        System.out.println(notificationScheduledServiceMock.notificationsForTodayArray);
+
+        // Assert
+        assertTrue(notificationScheduledServiceMock.notificationsForTodayArray.isEmpty());
+    }
 
     @Test
     void handleNotificationSavedEvent() {
     }
+
     private void dropAllTables() {
         notificationRepositoryAutowired.deleteAll();
     }
+
     private boolean isDatabaseEmpty() {
         return notificationRepositoryAutowired.findAll().isEmpty();
     }
