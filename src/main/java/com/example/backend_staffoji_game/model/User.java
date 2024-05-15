@@ -32,6 +32,6 @@ public class User {
     private String email;
 
     @Schema(description = "Premium status of the user")
-    @Column(name = "is_premium", nullable = false, columnDefinition = "bit default 0")
+    @Column(name = "is_premium", nullable = false)
     private boolean isPremium;
 }
