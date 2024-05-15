@@ -178,6 +178,34 @@ class UserScoreServiceTest {
         assertEquals(resultScore.get().getLevel_three(), 300);
     }
 
+    @Test
+    void createUserAndSetAllToNUll() {
+        // Check if database is empty
+        assertTrue(databaseIsEmpty());
+
+        // Create a user
+        UserDto userTest = new UserDto("test", "test", "test", false);
+
+        // Save user
+        userService.createUser(userTest);
+
+        // Update user score
+        userScoreService.updateUserScore("test", 1, 50);
+        userScoreService.updateUserScore("test", 2, 100);
+        userScoreService.updateUserScore("test", 3, 150);
+
+        // Delete user score
+        userScoreService.deletingUserScore(userTest.getUsername());
+
+        // expected
+        var expected = userScoreRepository.findByUserNameIs("test");
+
+        // Assert
+        assertEquals(expected.get().getLevel_one(), 0);
+        assertEquals(expected.get().getLevel_two(), 0);
+        assertEquals(expected.get().getLevel_three(), 0);
+    }
+
     private boolean databaseIsEmpty() {
         userRepository.findAll().isEmpty();
         userScoreRepository.findAll().isEmpty();

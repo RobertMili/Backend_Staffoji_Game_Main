@@ -1,5 +1,6 @@
 package com.example.backend_staffoji_game.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +14,9 @@ public class UserScoreDTO {
 
     @Schema(description = "User Id")
     private long userId;
+
+    @Schema(description = "User Name")
+    private String userName;
 
     @Schema(description = "User Level")
     private int level_one;
