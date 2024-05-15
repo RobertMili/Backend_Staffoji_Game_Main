@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: RobertMilicevic
+      changes:
+        - createTable:
+            tableName: UserScores
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: userName
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: level_one
+                  type: int
+              - column:
+                  name: level_two
+                  type: int
+              - column:
+                  name: level_three
+                  type: int
+              - column:
+                  name: level_four
+                  type: int
