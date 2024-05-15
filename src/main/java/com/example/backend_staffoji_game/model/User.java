@@ -3,8 +3,6 @@ package com.example.backend_staffoji_game.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.Type;
 
 @Data
 @NoArgsConstructor
@@ -22,7 +20,7 @@ public class User {
     private long id;
 
     @Column(unique = true, name = "username")
-    @Schema(description = "User Id")
+    @Schema(description = "user_name")
     private String username;
 
     @Column(name = "password")

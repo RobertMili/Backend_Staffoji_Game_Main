@@ -7,8 +7,10 @@ import com.example.backend_staffoji_game.exception.UserAlreadyExistsException;
 import com.example.backend_staffoji_game.exception.UserDoesNotExistsException;
 import com.example.backend_staffoji_game.model.Notification;
 import com.example.backend_staffoji_game.model.User;
+import com.example.backend_staffoji_game.model.UserScore;
 import com.example.backend_staffoji_game.repository.NotificationRepository;
 import com.example.backend_staffoji_game.repository.UserRepository;
+import com.example.backend_staffoji_game.repository.UserScoreRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserScoreRepository userScoreRepository;
 
 
     public UserDto createUser(UserDto userDto) {
@@ -26,7 +29,9 @@ public class UserService {
         checkIfUserExists(userDto);
         checkIfEmailExists(userDto);
         User user = buildUser(userDto);
+        var userScore = creatingScoreForUser(user);
         userRepository.save(user);
+        userScoreRepository.save(userScore);
         return userDto;
     }
 
@@ -65,6 +70,16 @@ public class UserService {
                 .build();
         return user;
     }
+
+    private UserScore creatingScoreForUser(User user) {
+        UserScore userScore = new UserScore();
+        userScore.setUserName(user.getUsername());
+        userScore.setLevel_one(0);
+        userScore.setLevel_two(0);
+        userScore.setLevel_three(0);
+        return userScore;
+    }
+
 
     public List<User> getAllUsers() {
         var findAll = userRepository.findAll();
