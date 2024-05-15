@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
-class NotificationScheduledServiceTest {
+class NotificationScheduledServiceTest_Mocka {
 
     @Mock
     private NotificationRepository notificationRepositoryMock;
@@ -270,6 +270,7 @@ class NotificationScheduledServiceTest {
         // Assert
         verify(emailService, times(1)).sendNotification(any(EmailNotificationSendNowDto.class));
     }
+
     @Test
     void testFetchingFromDatabaseInMidnight_NoNotifications() {
         // Arrange
@@ -295,17 +296,28 @@ class NotificationScheduledServiceTest {
         assertTrue(notificationScheduledServiceMock.notificationsForTodayArray.contains(notification));
     }
 
-    //todo fix this one
     @Test
     void testFetchingFromDatabaseInMidnight_NotificationsForFutureDate() {
         // Arrange
-        Notification notification = new Notification(1, "Test", "This is a test.", "all", false, LocalDateTime.now());
-        when(notificationRepositoryMock.findNotificationByDate(any(LocalDateTime.class), any(LocalDateTime.class)))
-                .thenReturn(Collections.singletonList(notification));
+        Notification notification = new Notification(1, "Test",
+                "This is a test.", "all", false, LocalDateTime.now().plusDays(1));
+        Notification notificationToday = new Notification(1, "Test",
+                "This is a test.", "all", false, LocalDateTime.now());
 
-        Notification notification2 = new Notification(1, "Test", "This is a test.", "all", false, LocalDateTime.now().plusDays(1));
+
+        // Mock the findNotificationByDate method to return the notificationToday object
         when(notificationRepositoryMock.findNotificationByDate(any(LocalDateTime.class), any(LocalDateTime.class)))
-                .thenReturn(Collections.singletonList(notification2));
+                .thenAnswer(invocation -> {
+                    LocalDateTime start = invocation.getArgument(0);
+                    LocalDateTime end = invocation.getArgument(1);
+                    if (notification.getSendTime().isAfter(start) && notification.getSendTime().isBefore(end)) {
+                        return Collections.singletonList(notification);
+                    } else if (notificationToday.getSendTime().isAfter(start) && notificationToday.getSendTime().isBefore(end)) {
+                        return Collections.singletonList(notificationToday);
+                    } else {
+                        return Collections.emptyList();
+                    }
+                });
 
         // Act
         notificationScheduledServiceMock.fetchingFromDatabaseInMidnight();
@@ -313,7 +325,7 @@ class NotificationScheduledServiceTest {
         System.out.println(notificationScheduledServiceMock.notificationsForTodayArray);
 
         // Assert
-        assertTrue(notificationScheduledServiceMock.notificationsForTodayArray.isEmpty());
+        assertEquals(Collections.singletonList(notificationToday), notificationScheduledServiceMock.notificationsForTodayArray);
     }
 
     @Test
