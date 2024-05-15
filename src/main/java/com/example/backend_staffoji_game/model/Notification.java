@@ -31,7 +31,7 @@ public class Notification {
 
 
     @Schema(description = "Notification Target")
-    @Column(name = "notificationTarget", nullable = false)
+    @Column(name = "notification_target", nullable = false)
     private String notificationTarget;
 
 
@@ -41,7 +41,7 @@ public class Notification {
 
 
     @Schema(description = "Send Time")
-    @Column(name = "sendTime", nullable = false)
+    @Column(name = "send_time", nullable = false)
     private LocalDateTime sendTime;
 
 }
