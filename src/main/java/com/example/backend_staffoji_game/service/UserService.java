@@ -1,16 +1,14 @@
 package com.example.backend_staffoji_game.service;
 
-import com.example.backend_staffoji_game.dto.NotificationDto;
 import com.example.backend_staffoji_game.dto.UserDto;
 import com.example.backend_staffoji_game.dto.UserPremiumStatusDto;
 import com.example.backend_staffoji_game.exception.UserAlreadyExistsException;
 import com.example.backend_staffoji_game.exception.UserDoesNotExistsException;
-import com.example.backend_staffoji_game.model.Notification;
 import com.example.backend_staffoji_game.model.User;
 import com.example.backend_staffoji_game.model.UserScore;
-import com.example.backend_staffoji_game.repository.NotificationRepository;
 import com.example.backend_staffoji_game.repository.UserRepository;
 import com.example.backend_staffoji_game.repository.UserScoreRepository;
+import dto.UserLoginDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -106,4 +104,12 @@ public class UserService {
                 .orElseThrow(() -> new UserDoesNotExistsException("User not found"));
     }
 
+    public UserLoginDTO getUserByUsernameAndPassword(String username, String password) {
+        User user = userRepository.findByUsernameAndPassword(username, password);
+        if (user != null) {
+            return new UserLoginDTO(user.getUsername(), user.getPassword());
+        } else {
+            throw new UserDoesNotExistsException("User not found with the provided username and password");
+        }
+    }
 }
