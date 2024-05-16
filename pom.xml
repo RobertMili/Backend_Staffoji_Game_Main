@@ -24,7 +24,6 @@
         <hibernate-core.version>6.1.4.Final</hibernate-core.version>
         <mysql-connector-java-version>8.0.28</mysql-connector-java-version>
         <hibernate-validator>7.0.1.Final</hibernate-validator>
-<!--        <liquibase.version>4.24.0</liquibase.version>-->
     </properties>
     <profiles>
         <profile>
@@ -55,20 +54,6 @@
         </profile>
     </profiles>
     <dependencies>
-
-<!--        &lt;!&ndash; liquibase-core &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.liquibase</groupId>-->
-<!--            <artifactId>liquibase-core</artifactId>-->
-<!--            <version>${liquibase.version}</version>-->
-<!--        </dependency>-->
-
-        <!-- Flyway -->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-parent</artifactId>
-        </dependency>
-
 
         <!-- Spring Boot Starter sending email-->
         <dependency>
