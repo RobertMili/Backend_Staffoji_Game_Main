@@ -55,6 +55,13 @@
     </profiles>
     <dependencies>
 
+        <!--mysql-->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>9.4.0.jre11</version>
+        </dependency>
+
         <!-- Spring Boot Starter sending email-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
