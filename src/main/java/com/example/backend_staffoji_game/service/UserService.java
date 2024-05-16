@@ -78,7 +78,6 @@ public class UserService {
         return userScore;
     }
 
-
     public List<User> getAllUsers() {
         var findAll = userRepository.findAll();
         checkIfUsersExist(findAll);
@@ -106,10 +105,14 @@ public class UserService {
 
     public UserLoginDTO getUserByUsernameAndPassword(String username, String password) {
         User user = userRepository.findByUsernameAndPassword(username, password);
-        if (user != null) {
+        if (isUserExists(user)) {
             return new UserLoginDTO(user.getUsername(), user.getPassword());
         } else {
             throw new UserDoesNotExistsException("User not found with the provided username and password");
         }
+    }
+
+    private static boolean isUserExists(User user) {
+        return user != null;
     }
 }
