@@ -45,7 +45,7 @@ public class UserController {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
-    @PutMapping("/")
+    @PutMapping("/updatePremium")
     public ResponseEntity<UserPremiumStatusDto> updateUser(@Valid final @RequestBody UserPremiumStatusDto userDto) {
         return new ResponseEntity<>(userService.updateIsPremium(userDto), HttpStatus.OK);
     }

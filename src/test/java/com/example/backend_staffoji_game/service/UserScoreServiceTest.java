@@ -44,7 +44,7 @@ class UserScoreServiceTest {
         assertTrue(databaseIsEmpty());
 
         // Create a user
-        UserDto userTest = new UserDto("test", "test", "test", false);
+        UserDto userTest = new UserDto("test", "test", "test@gmail.com", false);
 
         // Save user
         userService.createUser(userTest);
@@ -68,7 +68,7 @@ class UserScoreServiceTest {
         assertTrue(databaseIsEmpty());
 
         // Create a user
-        UserDto userTest = new UserDto("test", "test", "test", false);
+        UserDto userTest = new UserDto("test", "test", "test@gmail.com", false);
 
         // Save user
         userService.createUser(userTest);
@@ -93,7 +93,7 @@ class UserScoreServiceTest {
 
         for (int i = 0; i < 10; i++) {
             // Create a user
-            UserDto userTest = new UserDto("test" + i, "test", "test" + i, false);
+            UserDto userTest = new UserDto("test" + i, "test", "test"+ i + "@gmail.com", false);
 
             // Save user
             userService.createUser(userTest);
@@ -127,7 +127,7 @@ class UserScoreServiceTest {
         assertTrue(databaseIsEmpty());
 
         // Create a user
-        UserDto userTest = new UserDto("test", "test", "test", false);
+        UserDto userTest = new UserDto("test", "test", "test@gmail.com", false);
 
         // Save user
         userService.createUser(userTest);
@@ -153,7 +153,7 @@ class UserScoreServiceTest {
         assertTrue(databaseIsEmpty());
 
         // Create a user
-        UserDto userTest = new UserDto("test", "test", "test", false);
+        UserDto userTest = new UserDto("test", "test", "test@gmail.com", false);
 
         // Save user
         userService.createUser(userTest);
@@ -184,7 +184,7 @@ class UserScoreServiceTest {
         assertTrue(databaseIsEmpty());
 
         // Create a user
-        UserDto userTest = new UserDto("test", "test", "test", false);
+        UserDto userTest = new UserDto("test", "test", "test@gmail.com", false);
 
         // Save user
         userService.createUser(userTest);
@@ -206,6 +206,20 @@ class UserScoreServiceTest {
         assertEquals(expected.get().getLevel_three(), 0);
     }
 
+    @Test
+    void createUserWithFailEmail() {
+        // Check if database is empty
+        assertTrue(databaseIsEmpty());
+
+        // Create a user
+        UserDto userTest = new UserDto("test", "test", "test", false);
+
+        // Assert
+        assertThrows(UserDoesNotExistsException.class, () -> {
+            userService.createUser(userTest);
+        });
+
+    }
     private boolean databaseIsEmpty() {
         userRepository.findAll().isEmpty();
         userScoreRepository.findAll().isEmpty();

@@ -10,7 +10,11 @@ import com.example.backend_staffoji_game.repository.UserRepository;
 import com.example.backend_staffoji_game.repository.UserScoreRepository;
 import dto.UserLoginDTO;
 import lombok.AllArgsConstructor;
+
+import org.apache.commons.validator.EmailValidator;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -23,6 +27,7 @@ public class UserService {
 
 
     public UserDto createUser(UserDto userDto) {
+        validateEmail(userDto);
         validateUser(userDto);
         checkIfUserExists(userDto);
         checkIfEmailExists(userDto);
@@ -31,6 +36,13 @@ public class UserService {
         userRepository.save(user);
         userScoreRepository.save(userScore);
         return userDto;
+    }
+
+    private static void validateEmail(UserDto userDto) {
+        EmailValidator emailValidator = EmailValidator.getInstance();
+        if (!emailValidator.isValid(userDto.getEmail())) {
+            throw new UserDoesNotExistsException("Invalid email address");
+        }
     }
 
     private void validateUser(UserDto userDto) {

@@ -24,6 +24,7 @@
         <hibernate-core.version>6.1.4.Final</hibernate-core.version>
         <mysql-connector-java-version>8.0.28</mysql-connector-java-version>
         <hibernate-validator>7.0.1.Final</hibernate-validator>
+        <email-validator>1.7</email-validator>
     </properties>
     <profiles>
         <profile>
@@ -54,6 +55,13 @@
         </profile>
     </profiles>
     <dependencies>
+
+        <!--validator for email-->
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>${email-validator}</version>
+        </dependency>
 
         <!--mysql-->
         <dependency>

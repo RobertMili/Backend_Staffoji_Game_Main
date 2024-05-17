@@ -40,7 +40,7 @@ class UserServiceTest_IntegrationTest {
         assertTrue(databaseIsEmpty());
 
         // Create a user
-        UserDto userTest = new UserDto("test", "test", "test", false);
+        UserDto userTest = new UserDto("test", "test", "test@gmail.com", false);
 
         // Save user
         userService.createUser(userTest);
@@ -61,13 +61,13 @@ class UserServiceTest_IntegrationTest {
         assertTrue(databaseIsEmpty());
 
         // Create a user
-        UserDto userTest = new UserDto("testNegative", "testNegative", "testNegative", false);
+        UserDto userTest = new UserDto("testNegative", "testNegative", "test@gmail.com", false);
 
         // Save user
         userService.createUser(userTest);
 
         // Try to create another user with the same username and email
-        UserDto duplicateUser = new UserDto("testNegative", "testNegative", "testNegative", false);
+        UserDto duplicateUser = new UserDto("testNegative", "testNegative", "test@gmail.com", false);
 
         // Assert that a UserAlreadyExistsException is thrown
         assertThrows(UserAlreadyExistsException.class, () -> userService.createUser(duplicateUser));
@@ -81,7 +81,7 @@ class UserServiceTest_IntegrationTest {
         // Create a user and save it 100 times
         for (int i = 0; i < 100; i++) {
             // Create a user
-            UserDto userTest = new UserDto("test" + i, "test" + i, "test" + i,false);
+            UserDto userTest = new UserDto("test" + i, "test" + i, "test" + i + "@gmail.com",false);
             // Save user
             userService.createUser(userTest);
         }
@@ -99,7 +99,7 @@ class UserServiceTest_IntegrationTest {
         assertTrue(databaseIsEmpty());
 
         // Create a user
-        UserDto userTest = new UserDto("test", "test", "test");
+        UserDto userTest = new UserDto("test", "test", "test@gmail.com");
 
         // Save user
         userService.createUser(userTest);
@@ -118,7 +118,7 @@ class UserServiceTest_IntegrationTest {
         assertTrue(databaseIsEmpty());
 
         // Create a user
-        UserDto userTest = new UserDto("test", "test", "test", true);
+        UserDto userTest = new UserDto("test", "test", "test@gmail.com", true);
 
         // Save user
         userService.createUser(userTest);
@@ -137,7 +137,7 @@ class UserServiceTest_IntegrationTest {
         assertTrue(databaseIsEmpty());
 
         // Create a user
-        UserDto userTest = new UserDto("test", "test", "test");
+        UserDto userTest = new UserDto("test", "test", "test@gmail.com");
         UserPremiumStatusDto updateUser = new UserPremiumStatusDto(userTest.getUsername(), true);
 
         // Save user
@@ -160,7 +160,7 @@ class UserServiceTest_IntegrationTest {
         assertTrue(databaseIsEmpty());
 
         // Create a user
-        UserDto userTest = new UserDto("test", "test", "test", false);
+        UserDto userTest = new UserDto("test", "test", "test@gmail.com", false);
 
         // Save user
         userService.createUser(userTest);
