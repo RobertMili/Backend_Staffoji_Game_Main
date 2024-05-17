@@ -31,7 +31,7 @@ public class UserController {
 
 
     @PostMapping("/")
-    public ResponseEntity<UserDto> createNotification(@Valid final @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> createUser(@Valid final @RequestBody UserDto userDto) {
         return new ResponseEntity<>( userService.createUser(userDto), HttpStatus.CREATED);
     }
 
