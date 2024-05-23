@@ -25,6 +25,7 @@
         <mysql-connector-java-version>8.0.28</mysql-connector-java-version>
         <hibernate-validator>7.0.1.Final</hibernate-validator>
         <email-validator>1.7</email-validator>
+        <OAuth2.version>2.7.11</OAuth2.version>
     </properties>
     <profiles>
         <profile>
@@ -55,6 +56,13 @@
         </profile>
     </profiles>
     <dependencies>
+
+        <!-- OAuth2 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+            <version>${OAuth2.version}</version>
+        </dependency>
 
         <!--validator for email-->
         <dependency>
