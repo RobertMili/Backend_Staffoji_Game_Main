@@ -31,12 +31,18 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
         String email = oidcUser.getEmail();
 
+
         if (!Arrays.asList(allowedEmails).contains(email)) {
             HttpSession session = request.getSession(false);
             if (session != null) {
-                ((HttpSession) session).invalidate();
+                session.invalidate();
+
             }
-            redirectStrategy.sendRedirect(request, response, "/access-denied");
+            response.sendRedirect("/access-denied");
+        } else {
+            // Redirect to home page if the user's email is in the list of allowed emails
+            response.sendRedirect("/swagger-ui/index.html");
         }
+
     }
 }

@@ -4,6 +4,7 @@ package com.example.backend_staffoji_game.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,20 +19,20 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .cors(Customizer.withDefaults())
+       return http
+               .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeRequests(
-                        authorizeRequests -> {
+                       authorizeRequests -> {
                             authorizeRequests
-                                    .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).authenticated()
-                                    .anyRequest().permitAll();
-                        })
-                .oauth2Login(oauth2Login -> oauth2Login
-                        .defaultSuccessUrl("http://localhost:8083/swagger-ui/index.htm", true)
-                        .successHandler(authenticationSuccessHandler()))
-                .formLogin(Customizer.withDefaults())
-                .build();
+                                   .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).authenticated()
+                                   .anyRequest().permitAll();
+                       })
+               .oauth2Login(oauth2Login -> oauth2Login
+                       .successHandler(authenticationSuccessHandler()))
+               .formLogin(Customizer.withDefaults())
+               .build();
+
     }
 
     @Bean

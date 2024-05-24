@@ -12,8 +12,8 @@
 //@EnableWebSecurity
 //@Configuration
 //@Profile("local")
-//public class SecurityConfigDev {
-//
+//public class SecurityConfigLocal {
+
 //
 //    @Bean
 //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
