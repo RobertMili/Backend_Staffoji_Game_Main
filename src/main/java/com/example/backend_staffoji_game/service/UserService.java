@@ -1,5 +1,6 @@
 package com.example.backend_staffoji_game.service;
 
+import com.example.backend_staffoji_game.dto.UserAdminDTO;
 import com.example.backend_staffoji_game.dto.UserDto;
 import com.example.backend_staffoji_game.dto.UserPremiumStatusDto;
 import com.example.backend_staffoji_game.exception.UserAlreadyExistsException;
@@ -77,6 +78,7 @@ public class UserService {
                 .password(userDto.getPassword())
                 .email(userDto.getEmail())
                 .isPremium(userDto.isPremium())
+                .isAdmin(false)
                 .build();
         return user;
     }
@@ -115,12 +117,12 @@ public class UserService {
                 .orElseThrow(() -> new UserDoesNotExistsException("User not found"));
     }
 
-    public UserLoginDTO getUserByUsernameAndPassword(String username, String password) {
-        User user = userRepository.findByUsernameAndPassword(username, password);
+    public UserAdminDTO getUserByUsernameAndPassword(String email, String password) {
+        User user = userRepository.findByEmailAndPassword(email, password);
         if (isUserExists(user)) {
-            return new UserLoginDTO(user.getUsername(), user.getPassword());
+            return new UserAdminDTO(user.getEmail(), user.getPassword(), user.isPremium(), user.isAdmin());
         } else {
-            throw new UserDoesNotExistsException("User not found with the provided username and password");
+            throw new UserDoesNotExistsException("User not found with the provided email and password");
         }
     }
 

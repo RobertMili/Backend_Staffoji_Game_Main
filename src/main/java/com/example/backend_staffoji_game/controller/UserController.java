@@ -1,5 +1,6 @@
 package com.example.backend_staffoji_game.controller;
 
+import com.example.backend_staffoji_game.dto.UserAdminDTO;
 import com.example.backend_staffoji_game.dto.UserDto;
 import com.example.backend_staffoji_game.dto.UserPremiumStatusDto;
 import com.example.backend_staffoji_game.model.User;
@@ -36,8 +37,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserLoginDTO> loginUser(@Valid @RequestBody UserLoginDTO userLoginDTO) {
-        return new ResponseEntity<>(userService.getUserByUsernameAndPassword(userLoginDTO.getUsername(),userLoginDTO.getPassword()), HttpStatus.OK);
+    public ResponseEntity<UserAdminDTO> loginUser(@Valid @RequestBody UserLoginDTO userLoginDTO) {
+        return new ResponseEntity<>(userService.getUserByUsernameAndPassword(userLoginDTO.getEmail(),userLoginDTO.getPassword()), HttpStatus.OK);
     }
 
     @GetMapping("/")

@@ -18,11 +18,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
                 .authorizeRequests(
                         authorizeRequests -> {
-                            authorizeRequests.requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).authenticated();
-                            authorizeRequests.anyRequest().permitAll();
-
+                            authorizeRequests
+                                    .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).authenticated()
+                                    .anyRequest().permitAll();
                         })
                 .oauth2Login(oauth2Login -> oauth2Login
                         .defaultSuccessUrl("http://localhost:8083/swagger-ui/index.htm", true)

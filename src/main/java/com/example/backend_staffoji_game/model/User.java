@@ -32,4 +32,11 @@ public class User {
     @Schema(description = "Premium status of the user")
     @Column(name = "is_premium", nullable = false)
     private boolean isPremium;
+
+    @Schema(description = "admin status of the user")
+    @Column(name = "is_admin", nullable = false)
+    private boolean isAdmin;
+
+
+
 }
