@@ -11,7 +11,6 @@ import com.example.backend_staffoji_game.model.UserScore;
 import com.example.backend_staffoji_game.repository.UserRepository;
 import com.example.backend_staffoji_game.repository.UserScoreRepository;
 import lombok.AllArgsConstructor;
-
 import org.apache.commons.validator.EmailValidator;
 import org.springframework.stereotype.Service;
 

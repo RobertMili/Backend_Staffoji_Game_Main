@@ -18,7 +18,7 @@ public class BackUpService {
     private final UserRepository userRepository;
     private final EmailService emailService;
 
-
+    // @Scheduled(fixedRate = 30000) this is for demonstration purposes
     @Scheduled(cron = "0 0 9 * * MON")
     public void executePythonScript() throws IOException {
         String argument = userRepository.findAll().toString();
