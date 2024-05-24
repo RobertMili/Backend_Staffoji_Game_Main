@@ -10,13 +10,9 @@ import com.example.backend_staffoji_game.model.User;
 import com.example.backend_staffoji_game.model.UserScore;
 import com.example.backend_staffoji_game.repository.UserRepository;
 import com.example.backend_staffoji_game.repository.UserScoreRepository;
-import dto.UserLoginDTO;
 import lombok.AllArgsConstructor;
-
 import org.apache.commons.validator.EmailValidator;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -121,7 +117,7 @@ public class UserService {
     public UserAdminDTO getUserByUsernameAndPassword(String email, String password) {
         User user = userRepository.findByEmailAndPassword(email, password);
         if (isUserExists(user)) {
-            return new UserAdminDTO(user.getUsername(), user.getPassword(),user.getEmail(), user.isPremium(), user.isAdmin());
+            return new UserAdminDTO(user.getUsername(), user.getPassword(), user.getEmail(), user.isPremium(), user.isAdmin());
         } else {
             throw new UserDoesNotExistsException("User not found with the provided email and password");
         }
