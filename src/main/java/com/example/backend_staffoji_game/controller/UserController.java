@@ -13,13 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 
 @CrossOrigin
 @RestController
-@Profile({"local","dev"})
+@Profile({"local", "dev"})
 @Validated
 @RequestMapping("/user")
 public class UserController {
@@ -34,12 +33,12 @@ public class UserController {
 
     @PostMapping("/")
     public ResponseEntity<UserDto> createUser(@Valid final @RequestBody UserDto userDto) {
-        return new ResponseEntity<>( userService.createUser(userDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public ResponseEntity<UserAdminDTO> loginUser(@Valid @RequestBody UserLoginDTO userLoginDTO) {
-        return new ResponseEntity<>(userService.getUserByUsernameAndPassword(userLoginDTO.getEmail(),userLoginDTO.getPassword()), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUserByUsernameAndPassword(userLoginDTO.getEmail(), userLoginDTO.getPassword()), HttpStatus.OK);
     }
 
     @GetMapping("/")
