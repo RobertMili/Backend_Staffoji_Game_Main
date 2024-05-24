@@ -1,6 +1,7 @@
 package com.example.backend_staffoji_game.controller;
 
 import com.example.backend_staffoji_game.dto.UserAdminDTO;
+import com.example.backend_staffoji_game.dto.UserAdminUpdateDTO;
 import com.example.backend_staffoji_game.dto.UserDto;
 import com.example.backend_staffoji_game.dto.UserPremiumStatusDto;
 import com.example.backend_staffoji_game.model.User;
@@ -49,6 +50,11 @@ public class UserController {
     @PutMapping("/updatePremium")
     public ResponseEntity<UserPremiumStatusDto> updateUser(@Valid final @RequestBody UserPremiumStatusDto userDto) {
         return new ResponseEntity<>(userService.updateIsPremium(userDto), HttpStatus.OK);
+    }
+
+    @PutMapping("/updateAdmin")
+    public ResponseEntity<UserAdminUpdateDTO> updateUser(@Valid final @RequestBody UserAdminUpdateDTO userDto) {
+        return new ResponseEntity<>(userService.updateIsAdmin(userDto), HttpStatus.OK);
     }
 
 }

@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserAdminDTO {
+public class UserAdminUpdateDTO {
     private String username;
-    private String password;
-    private String email;
     private boolean isPremium;
     private boolean isAdmin;
 }

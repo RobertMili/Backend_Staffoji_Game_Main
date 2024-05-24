@@ -1,5 +1,6 @@
 package com.example.backend_staffoji_game.service;
 
+import com.example.backend_staffoji_game.dto.UserAdminUpdateDTO;
 import com.example.backend_staffoji_game.dto.UserDto;
 import com.example.backend_staffoji_game.dto.UserPremiumStatusDto;
 import com.example.backend_staffoji_game.exception.UserAlreadyExistsException;
@@ -165,10 +166,10 @@ class UserServiceTest_IntegrationTest {
         // Save user
         userService.createUser(userTest);
 
-        var expect = userService.getUserByUsernameAndPassword(userTest.getUsername(), userTest.getPassword());
+        var expect = userService.getUserByUsernameAndPassword(userTest.getEmail(), userTest.getPassword());
 
         // Assert;
-        assertEquals(expect.getUsername(), userTest.getUsername());
+        assertEquals(expect.getEmail(), userTest.getEmail());
         assertEquals(expect.getPassword(), userTest.getPassword());
     }
 
@@ -194,6 +195,49 @@ class UserServiceTest_IntegrationTest {
         assertThrows(UserDoesNotExistsException.class, () -> {
             userService.getUserByUsernameAndPassword("nonexistent", null);
         });
+    }
+
+    @Test
+    void createUserWithAdminFalse_positiveTest() {
+        // Check if database is empty
+        assertTrue(databaseIsEmpty());
+
+        // Create a user
+        UserDto userTest = new UserDto("test", "test", "test@gmail.com", false);
+
+        // Save user
+        userService.createUser(userTest);
+
+        // Check if user is saved
+        var result = userRepository.findByUsername("test");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(result.get().isAdmin(),false);
+    }
+
+    @Test
+    void updateAdmin() {
+        // Check if database is empty
+        assertTrue(databaseIsEmpty());
+
+        // Create a user
+        UserDto userTest = new UserDto("test", "test", "test@gmail.com", false);
+        UserAdminUpdateDTO updateUser = new UserAdminUpdateDTO(userTest.getUsername(), true,true);
+
+        // Save user
+        userService.createUser(userTest);
+        userService.updateIsAdmin(updateUser);
+
+        // Check if user is saved
+        var result = userRepository.findByUsername("test");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(result.get().getUsername(), userTest.getUsername());
+        assertEquals(result.get().isAdmin(),true);
+        assertEquals(result.get().isPremium(),true);
+
     }
 
     @Test

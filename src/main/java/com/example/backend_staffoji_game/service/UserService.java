@@ -1,6 +1,7 @@
 package com.example.backend_staffoji_game.service;
 
 import com.example.backend_staffoji_game.dto.UserAdminDTO;
+import com.example.backend_staffoji_game.dto.UserAdminUpdateDTO;
 import com.example.backend_staffoji_game.dto.UserDto;
 import com.example.backend_staffoji_game.dto.UserPremiumStatusDto;
 import com.example.backend_staffoji_game.exception.UserAlreadyExistsException;
@@ -120,7 +121,7 @@ public class UserService {
     public UserAdminDTO getUserByUsernameAndPassword(String email, String password) {
         User user = userRepository.findByEmailAndPassword(email, password);
         if (isUserExists(user)) {
-            return new UserAdminDTO(user.getEmail(), user.getPassword(), user.isPremium(), user.isAdmin());
+            return new UserAdminDTO(user.getUsername(), user.getPassword(),user.getEmail(), user.isPremium(), user.isAdmin());
         } else {
             throw new UserDoesNotExistsException("User not found with the provided email and password");
         }
@@ -128,5 +129,13 @@ public class UserService {
 
     private static boolean isUserExists(User user) {
         return user != null;
+    }
+
+    public UserAdminUpdateDTO updateIsAdmin(UserAdminUpdateDTO userDto) {
+        var user = findUserByUsername(userDto.getUsername());
+        user.setAdmin(userDto.isAdmin());
+        user.setPremium(userDto.isPremium());
+        userRepository.save(user);
+        return userDto;
     }
 }
