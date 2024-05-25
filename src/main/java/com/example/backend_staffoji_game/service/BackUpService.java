@@ -18,8 +18,8 @@ public class BackUpService {
     private final UserRepository userRepository;
     private final EmailService emailService;
 
-     @Scheduled(fixedRate = 30000)
-   // @Scheduled(cron = "0 0 9 * * MON")
+//     @Scheduled(fixedRate = 30000)
+    @Scheduled(cron = "0 0 9 * * MON")
     public void executePythonScript() throws IOException {
         String argument = userRepository.findAll().toString();
         ProcessBuilder processBuilder = new ProcessBuilder("python3", "/home/robert/IdeaProjects/Backend_staffoji_game/src/main/java/com/example/backend_staffoji_game/python_script/python.py", argument);

@@ -14,7 +14,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
-@Profile({"local","dev"})
+@Profile({"local"})
 public class SecurityConfig {
 
     @Bean
