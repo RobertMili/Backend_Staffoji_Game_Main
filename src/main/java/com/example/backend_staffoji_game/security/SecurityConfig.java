@@ -14,24 +14,24 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
-@Profile({"local"})
+@Profile({"local","dev"})
 public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-       return http
-               .cors(Customizer.withDefaults())
+        return http
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeRequests(
-                       authorizeRequests -> {
+                        authorizeRequests -> {
                             authorizeRequests
-                                   .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).authenticated()
-                                   .anyRequest().permitAll();
-                       })
-               .oauth2Login(oauth2Login -> oauth2Login
-                       .successHandler(authenticationSuccessHandler()))
-               .formLogin(Customizer.withDefaults())
-               .build();
+                                    .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).authenticated()
+                                    .anyRequest().permitAll();
+                        })
+                .oauth2Login(oauth2Login -> oauth2Login
+                        .successHandler(authenticationSuccessHandler()))
+                .formLogin(Customizer.withDefaults())
+                .build();
 
     }
 
