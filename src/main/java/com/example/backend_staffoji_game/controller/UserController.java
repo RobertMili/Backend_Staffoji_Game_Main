@@ -55,5 +55,10 @@ public class UserController {
     public ResponseEntity<UserAdminUpdateDTO> updateUser(@Valid final @RequestBody UserAdminUpdateDTO userDto) {
         return new ResponseEntity<>(userService.updateIsAdmin(userDto), HttpStatus.OK);
     }
+    @DeleteMapping("/userName/{userName}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String userName) {
+        userService.deleteUser(userName);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 }

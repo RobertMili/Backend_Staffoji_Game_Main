@@ -134,4 +134,9 @@ public class UserService {
         userRepository.save(user);
         return userDto;
     }
+
+    public void deleteUser(String userName) {
+        var user = findUserByUsername(userName);
+        userRepository.delete(user);
+    }
 }
