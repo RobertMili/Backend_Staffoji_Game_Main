@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changelog-master-users.yaml
+  - include:
+        file: db/changelog/changelog-master-notification.yaml
+  - include:
+        file: db/changelog/changelog-master-users-score.yaml

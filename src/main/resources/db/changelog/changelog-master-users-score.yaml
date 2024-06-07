@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: user-scores-table
+      author: yourname
+      changes:
+        - createTable:
+            tableName: user_scores
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: level_one
+                  type: int
+              - column:
+                  name: level_two
+                  type: int
+              - column:
+                  name: level_three
+                  type: int

@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: update-notification-table2
+      author: yourname
+#      validCheckSum: 8:1b595b25ceb577ebc4d12e844e631078
+      changes:
+        - createTable:
+            tableName: notification
+            columns:
+              - column:
+                  name: notification_id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: message
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: notification_target
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: topic
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: send_time
+                  type: timestamp
+                  constraints:
+                    nullable: false

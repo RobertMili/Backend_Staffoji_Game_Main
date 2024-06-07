@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-level-four-column2
+      author: yourname
+      changes:
+        - addColumn:
+            tableName: user_scores
+            columns:
+              - column:
+                  name: level_four
+                  type: int

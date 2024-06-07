@@ -36,7 +36,7 @@ public class UserScore {
 
     //todo use this if need to add more levels
 //    @Schema(description = "User Level")
-//    @Column(nullable = true)
 //    private Integer level_four;
+
 
 }

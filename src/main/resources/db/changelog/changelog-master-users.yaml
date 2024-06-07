@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-users-table2
+      author: yourname
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: is_premium
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_admin
+                  type: boolean
+                  constraints:
+                    nullable: false
