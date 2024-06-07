@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: add-level-four-column2
+      id: add-level-four-column3
       author: yourname
       changes:
         - addColumn:
