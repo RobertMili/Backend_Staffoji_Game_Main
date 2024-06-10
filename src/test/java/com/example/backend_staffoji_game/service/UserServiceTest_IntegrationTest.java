@@ -6,11 +6,13 @@ import com.example.backend_staffoji_game.dto.UserPremiumStatusDto;
 import com.example.backend_staffoji_game.exception.UserAlreadyExistsException;
 import com.example.backend_staffoji_game.exception.UserDoesNotExistsException;
 import com.example.backend_staffoji_game.repository.UserRepository;
+import org.antlr.v4.runtime.atn.RuleTransition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,6 +25,9 @@ class UserServiceTest_IntegrationTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     @BeforeEach
@@ -52,7 +57,7 @@ class UserServiceTest_IntegrationTest {
         // Assert
         assertTrue(result.isPresent());
         assertEquals(result.get().getUsername(), userTest.getUsername());
-        assertEquals(result.get().getPassword(), userTest.getPassword());
+        assertTrue(passwordEncoder.matches(userTest.getPassword(), result.get().getPassword()));
         assertEquals(result.get().getEmail(), userTest.getEmail());
     }
 
@@ -170,7 +175,7 @@ class UserServiceTest_IntegrationTest {
 
         // Assert;
         assertEquals(expect.getEmail(), userTest.getEmail());
-        assertEquals(expect.getPassword(), userTest.getPassword());
+        assertTrue(passwordEncoder.matches(userTest.getPassword(), expect.getPassword()));
     }
 
     @Test

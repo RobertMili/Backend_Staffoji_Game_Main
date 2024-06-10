@@ -12,9 +12,11 @@ import com.example.backend_staffoji_game.repository.UserRepository;
 import com.example.backend_staffoji_game.repository.UserScoreRepository;
 import lombok.AllArgsConstructor;
 import org.apache.commons.validator.EmailValidator;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -22,7 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserScoreRepository userScoreRepository;
-
+    private final PasswordEncoder passwordEncoder;
 
     public UserDto createUser(UserDto userDto) {
         validateEmail(userDto);
@@ -69,10 +71,10 @@ public class UserService {
         }
     }
 
-    private static User buildUser(UserDto userDto) {
+    private User buildUser(UserDto userDto) {
         User user = User.builder()
                 .username(userDto.getUsername())
-                .password(userDto.getPassword())
+                .password(passwordEncoder.encode(userDto.getPassword()))
                 .email(userDto.getEmail())
                 .isPremium(userDto.isPremium())
                 .isAdmin(false)
@@ -114,17 +116,17 @@ public class UserService {
                 .orElseThrow(() -> new UserDoesNotExistsException("User not found"));
     }
 
-    public UserAdminDTO getUserByUsernameAndPassword(String email, String password) {
-        User user = userRepository.findByEmailAndPassword(email, password);
-        if (isUserExists(user)) {
-            return new UserAdminDTO(user.getUsername(), user.getPassword(), user.getEmail(), user.isPremium(), user.isAdmin());
+    public UserAdminDTO getUserByUsernameAndPassword(String email, String rawPassword) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (isUserExists(rawPassword, user)) {
+            return new UserAdminDTO(user.get().getUsername(), user.get().getPassword(), user.get().getEmail(), user.get().isPremium(), user.get().isAdmin());
         } else {
             throw new UserDoesNotExistsException("User not found with the provided email and password");
         }
     }
 
-    private static boolean isUserExists(User user) {
-        return user != null;
+    private boolean isUserExists(String rawPassword, Optional<User> user) {
+        return user.isPresent() && passwordEncoder.matches(rawPassword, user.get().getPassword());
     }
 
     public UserAdminUpdateDTO updateIsAdmin(UserAdminUpdateDTO userDto) {
