@@ -93,4 +93,12 @@ public class EmailService {
     private List<String> getAllEmailAddresses() {
         return userRepository.findAllEmails();
     }
+
+    public void sendVerificationEmail(String to, String subject, String text) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setTo(to);
+        mail.setSubject(subject);
+        mail.setText(text);
+        javaMailSender.send(mail);
+    }
 }

@@ -61,4 +61,14 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyUser(@RequestParam("token") String token) {
+        boolean isVerified = userService.verifyUser(token);
+        if (isVerified) {
+            return ResponseEntity.ok("Email verified successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid verification token");
+        }
+    }
+
 }

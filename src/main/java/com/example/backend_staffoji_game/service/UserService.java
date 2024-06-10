@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -25,6 +26,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserScoreRepository userScoreRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     public UserDto createUser(UserDto userDto) {
         validateEmail(userDto);
@@ -35,7 +37,36 @@ public class UserService {
         var userScore = creatingScoreForUser(user);
         userRepository.save(user);
         userScoreRepository.save(userScore);
+
+        // Generate a verification token
+        String token = UUID.randomUUID().toString();
+        // Save the token associated with the user
+        // This could be in a separate table in your database
+        // For simplicity, let's assume you have a method for this
+        saveUserVerificationToken(user, token);
+
+        // Send the verification email
+        String verificationLink = "http://localhost:3000/verify?token=" + token;
+        emailService.sendVerificationEmail(user.getEmail(), "Please verify your email", "Click the following link to verify your email: " + verificationLink);
+
+
         return userDto;
+    }
+    public boolean verifyUser(String token) {
+        Optional<User> optionalUser = userRepository.findByVerificationToken(token);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setEmailVerified(true);
+            userRepository.save(user);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void saveUserVerificationToken(User user, String token) {
+        user.setVerificationToken(token);
+        userRepository.save(user);
     }
 
     private static void validateEmail(UserDto userDto) {
@@ -119,9 +150,16 @@ public class UserService {
     public UserAdminDTO getUserByUsernameAndPassword(String email, String rawPassword) {
         Optional<User> user = userRepository.findByEmail(email);
         if (isUserExists(rawPassword, user)) {
+            verifyUserEmailStatus(user);
             return new UserAdminDTO(user.get().getUsername(), user.get().getPassword(), user.get().getEmail(), user.get().isPremium(), user.get().isAdmin());
         } else {
             throw new UserDoesNotExistsException("User not found with the provided email and password");
+        }
+    }
+
+    private static void verifyUserEmailStatus(Optional<User> user) {
+        if (!user.get().isEmailVerified()) {
+            throw new UserDoesNotExistsException("Email not verified");
         }
     }
 

@@ -37,6 +37,13 @@ public class User {
     @Column(name = "is_admin", nullable = false)
     private boolean isAdmin;
 
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified = false;
 
+    @Column(name = "verification_token")
+    private String verificationToken;
 
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
 }
