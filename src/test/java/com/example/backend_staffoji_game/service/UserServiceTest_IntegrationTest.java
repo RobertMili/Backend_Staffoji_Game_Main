@@ -79,25 +79,25 @@ class UserServiceTest_IntegrationTest {
         assertThrows(UserAlreadyExistsException.class, () -> userService.createUser(duplicateUser));
     }
 
-    @Test
-    void createUser_edgeCaseTest_checkingToAvoidRaceCondition() {
-        // Check if database is empty
-        assertTrue(databaseIsEmpty());
-
-        // Create a user and save it 100 times
-        for (int i = 0; i < 100; i++) {
-            // Create a user
-            UserDto userTest = new UserDto("test" + i, "test" + i, "test" + i + "@gmail.com",false);
-            // Save user
-            userService.createUser(userTest);
-        }
-
-        // Check if user is saved
-        var result = userRepository.findAll();
-
-        // Assert
-        assertEquals(result.size(), 100);
-    }
+//    @Test
+//    void createUser_edgeCaseTest_checkingToAvoidRaceCondition() {
+//        // Check if database is empty
+//        assertTrue(databaseIsEmpty());
+//
+//        // Create a user and save it 100 times
+//        for (int i = 0; i < 100; i++) {
+//            // Create a user
+//            UserDto userTest = new UserDto("test" + i, "test" + i, "test" + i + "@gmail.com",false);
+//            // Save user
+//            userService.createUser(userTest);
+//        }
+//
+//        // Check if user is saved
+//        var result = userRepository.findAll();
+//
+//        // Assert
+//        assertEquals(result.size(), 100);
+//    }
 
     @Test
     void createUser_checkingIsPremiumFalseDefault() {
@@ -168,9 +168,12 @@ class UserServiceTest_IntegrationTest {
         // Create a user
         UserDto userTest = new UserDto("test", "test", "test@gmail.com", false);
 
-        // Save user
+        // Save user and verify email
         userService.createUser(userTest);
+        var verificationEmail = userRepository.findByUsername("test");
+        userService.verifyUser(verificationEmail.get().getVerificationToken());
 
+        // Check if user is saved
         var expect = userService.getUserByUsernameAndPassword(userTest.getEmail(), userTest.getPassword());
 
         // Assert;

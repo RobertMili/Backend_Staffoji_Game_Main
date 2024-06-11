@@ -209,6 +209,33 @@ class UserScoreServiceTest {
     }
 
     @Test
+    void verificationEmail() {
+        // Check if database is empty
+        assertTrue(databaseIsEmpty());
+
+        // Create a user
+        UserDto userTest = new UserDto("test", "test", "test@gmail.com", false);
+
+        // Save user
+        userService.createUser(userTest);
+
+        // Check if user is saved
+        var result = userRepository.findByUsername("test");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(result.get().isEmailVerified(), false);
+
+        // Verify email
+        userService.verifyUser(result.get().getVerificationToken());
+
+        var newResult = userRepository.findByUsername("test");
+
+        // Check if user is saved
+        assertEquals(newResult.get().isEmailVerified(), true);
+    }
+
+    @Test
     void createUserWithFailEmail() {
         // Check if database is empty
         assertTrue(databaseIsEmpty());
