@@ -6,10 +6,14 @@ import com.example.backend_staffoji_game.dto.UserPremiumStatusDto;
 import com.example.backend_staffoji_game.exception.UserAlreadyExistsException;
 import com.example.backend_staffoji_game.exception.UserDoesNotExistsException;
 import com.example.backend_staffoji_game.repository.UserRepository;
+import com.example.backend_staffoji_game.repository.UserScoreRepository;
 import org.antlr.v4.runtime.atn.RuleTransition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,12 +33,20 @@ class UserServiceTest_IntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserScoreRepository userScoreRepository;
+    @Mock
+    private EmailService emailService;
+
+    @Value("${APP_BASE_URL}")
+    private String baseUrl;
 
     @BeforeEach
     public void setUp() {
         cleanUpDatabase();
+        MockitoAnnotations.openMocks(this);
+        userService = new UserService(userRepository, userScoreRepository, passwordEncoder, emailService, baseUrl);
     }
-
     private void cleanUpDatabase() {
         userRepository.deleteAll();
     }
@@ -79,25 +91,25 @@ class UserServiceTest_IntegrationTest {
         assertThrows(UserAlreadyExistsException.class, () -> userService.createUser(duplicateUser));
     }
 
-//    @Test
-//    void createUser_edgeCaseTest_checkingToAvoidRaceCondition() {
-//        // Check if database is empty
-//        assertTrue(databaseIsEmpty());
-//
-//        // Create a user and save it 100 times
-//        for (int i = 0; i < 100; i++) {
-//            // Create a user
-//            UserDto userTest = new UserDto("test" + i, "test" + i, "test" + i + "@gmail.com",false);
-//            // Save user
-//            userService.createUser(userTest);
-//        }
-//
-//        // Check if user is saved
-//        var result = userRepository.findAll();
-//
-//        // Assert
-//        assertEquals(result.size(), 100);
-//    }
+    @Test
+    void createUser_edgeCaseTest_checkingToAvoidRaceCondition() {
+        // Check if database is empty
+        assertTrue(databaseIsEmpty());
+
+        // Create a user and save it 100 times
+        for (int i = 0; i < 100; i++) {
+            // Create a user
+            UserDto userTest = new UserDto("test" + i, "test" + i, "test" + i + "@gmail.com",false);
+            // Save user
+            userService.createUser(userTest);
+        }
+
+        // Check if user is saved
+        var result = userRepository.findAll();
+
+        // Assert
+        assertEquals(result.size(), 100);
+    }
 
     @Test
     void createUser_checkingIsPremiumFalseDefault() {
@@ -222,6 +234,33 @@ class UserServiceTest_IntegrationTest {
         // Assert
         assertTrue(result.isPresent());
         assertEquals(result.get().isAdmin(),false);
+    }
+
+    @Test
+    void verificationEmail() {
+        // Check if database is empty
+        assertTrue(databaseIsEmpty());
+
+        // Create a user
+        UserDto userTest = new UserDto("test", "test", "test@gmail.com", false);
+
+        // Save user
+        userService.createUser(userTest);
+
+        // Check if user is saved
+        var result = userRepository.findByUsername("test");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(result.get().isEmailVerified(), false);
+
+        // Verify email
+        userService.verifyUser(result.get().getVerificationToken());
+
+        var newResult = userRepository.findByUsername("test");
+
+        // Check if user is saved
+        assertEquals(newResult.get().isEmailVerified(), true);
     }
 
     @Test
