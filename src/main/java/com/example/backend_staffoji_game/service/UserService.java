@@ -14,19 +14,28 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.validator.EmailValidator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final UserScoreRepository userScoreRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private String baseUrl;
+
+    public UserService(UserRepository userRepository, UserScoreRepository userScoreRepository, PasswordEncoder passwordEncoder, EmailService emailService, @Value("${APP_BASE_URL}") String baseUrl) {
+        this.userRepository = userRepository;
+        this.userScoreRepository = userScoreRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
+        this.baseUrl = baseUrl;
+    }
 
     public UserDto createUser(UserDto userDto) {
         validateEmail(userDto);
@@ -34,34 +43,11 @@ public class UserService {
         checkIfUserExists(userDto);
         checkIfEmailExists(userDto);
         User user = buildUser(userDto);
+        generateAndSendVerificationToken(user);
         var userScore = creatingScoreForUser(user);
         userRepository.save(user);
         userScoreRepository.save(userScore);
-
-        // Generate a verification token
-        String token = UUID.randomUUID().toString();
-        // Save the token associated with the user
-        // This could be in a separate table in your database
-        // For simplicity, let's assume you have a method for this
-        saveUserVerificationToken(user, token);
-
-        // Send the verification email
-        String verificationLink = "http://localhost:3000/verify?token=" + token;
-        emailService.sendVerificationEmail(user.getEmail(), "Please verify your email", "Click the following link to verify your email: " + verificationLink);
-
-
         return userDto;
-    }
-    public boolean verifyUser(String token) {
-        Optional<User> optionalUser = userRepository.findByVerificationToken(token);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setEmailVerified(true);
-            userRepository.save(user);
-            return true;
-        } else {
-            return false;
-        }
     }
 
     private void saveUserVerificationToken(User user, String token) {
@@ -111,6 +97,29 @@ public class UserService {
                 .isAdmin(false)
                 .build();
         return user;
+    }
+
+    private void generateAndSendVerificationToken(User user) {
+        String token = UUID.randomUUID().toString();
+        saveUserVerificationToken(user, token);
+        String verificationLink = baseUrl + "/verify?token=" + token;
+
+        emailService.sendVerificationEmail(user.getEmail(),
+                "Please verify your email",
+                "Click the following link to verify your email: "
+                        + verificationLink);
+    }
+
+    public boolean verifyUser(String token) {
+        Optional<User> optionalUser = userRepository.findByVerificationToken(token);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setEmailVerified(true);
+            userRepository.save(user);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private UserScore creatingScoreForUser(User user) {
