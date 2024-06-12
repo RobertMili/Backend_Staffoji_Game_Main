@@ -17,7 +17,9 @@
 </p>
 <h3>Welcome to the backend for Staffoji Game! 
 This repository contains the server-side code for managing user data,
-notifications, leaderboard, security, and more, all implemented in Java.</h2>
+notifications, leaderboard, security, and more, all implemented in Java.
+Additionally, Python scripts are integrated for database backup operations,
+adding an extra layer of resilience to the system.</h2>
 
 
 ## Features:
@@ -54,11 +56,23 @@ notifications, leaderboard, security, and more, all implemented in Java.</h2>
 
 Local installation requires the following steps:
 
-- docker run -d --name BoostApp -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres
-- docker run image
-- Set environment variables to local.
-- run code
-- Access Swagger UI: http://localhost:8083/swagger-ui.html
+1. Start a PostgreSQL container:
+   ```bash
+   docker run -d --name BoostApp -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres
+   
+2. Run docker image:
+3. Set the following environment variables to `local`:
+
+   - `APP_PASSWORD`: Password for the email account used by the application to send emails. Replace this with your actual email account password.
+   - `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`: Google OAuth2 client ID and client secret. Replace these with your actual credentials.
+   - `ALLOWED_EMAILS`: Comma-separated list of emails allowed to use the application. Replace with actual emails.
+4. Run the application or click on play button:
+   ```bash
+   mvn spring-boot:run
+   ```
+
+5. Access Swagger UI: http://localhost:8083/swagger-ui.html
+
 
 ## Usage:
 
