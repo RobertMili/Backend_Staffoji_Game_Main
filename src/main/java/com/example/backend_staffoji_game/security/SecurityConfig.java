@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -21,13 +22,14 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("Setting up security filter chain");
         return http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeRequests(
                         authorizeRequests -> {
                             authorizeRequests
-                                    .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).authenticated()
+                                    .requestMatchers(new AntPathRequestMatcher("/swagger-ui/index.html")).authenticated()
                                     .anyRequest().permitAll();
                         })
                 .oauth2Login(oauth2Login -> oauth2Login
