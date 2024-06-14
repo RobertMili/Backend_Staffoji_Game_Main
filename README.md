@@ -19,6 +19,8 @@
 This repository contains the server-side code for managing user data,
 notifications, leaderboard, security, and more, all implemented in Java.
 Additionally, Python scripts are integrated for database backup operations,
+
+
 adding an extra layer of resilience to the system.</h2>
 
 ## Video Explanation
