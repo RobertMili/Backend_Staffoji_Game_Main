@@ -186,6 +186,9 @@ public class UserService {
 
     public void deleteUser(String userName) {
         var user = findUserByUsername(userName);
+        var userScore = userScoreRepository.findByUserNameIs(userName)
+                .orElseThrow(() -> new UserDoesNotExistsException("No UserScore found with id: " + userName));;
         userRepository.delete(user);
+        userScoreRepository.delete(userScore);
     }
 }

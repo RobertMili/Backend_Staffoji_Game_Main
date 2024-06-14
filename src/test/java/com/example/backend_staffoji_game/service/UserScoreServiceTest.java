@@ -222,6 +222,7 @@ class UserScoreServiceTest {
         });
 
     }
+
     private boolean databaseIsEmpty() {
         userRepository.findAll().isEmpty();
         userScoreRepository.findAll().isEmpty();
