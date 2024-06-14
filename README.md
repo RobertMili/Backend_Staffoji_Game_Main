@@ -21,6 +21,11 @@ notifications, leaderboard, security, and more, all implemented in Java.
 Additionally, Python scripts are integrated for database backup operations,
 adding an extra layer of resilience to the system.</h2>
 
+## Video Explanation
+To get a quick overview of the project, watch this explainer video:
+
+[![Explainer Video](http://img.youtube.com/vi/V8_FROSzBKg/0.jpg)](http://www.youtube.com/watch?v=V8_FROSzBKg "Explainer Video")
+
 
 ## Features:
 - **User Backend:** Manages user accounts, authentication, and user-related data.
